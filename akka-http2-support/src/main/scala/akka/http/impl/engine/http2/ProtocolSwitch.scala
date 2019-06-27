@@ -56,7 +56,11 @@ private[http] object ProtocolSwitch {
               }
           })
 
-          private val ignorePull = new OutHandler { def onPull(): Unit = () }
+          private val ignorePull = new OutHandler {
+            def onPull(): Unit = {
+              println("[FIXME remove this] ignoring pull from 'outside' for now as we're not ready to switch yet")
+            }
+          }
 
           setHandler(netOut, ignorePull)
 
@@ -83,11 +87,14 @@ private[http] object ProtocolSwitch {
             val firstHandler =
               initialElement match {
                 case Some(ele) if out.isAvailable =>
+                  println("XXXX Selected out was available, so pushing to it immediately")
                   out.push(ele)
                   propagatePull
                 case Some(ele) =>
+                  println("XXXX Selected out was not yet available, waiting for pull")
                   new OutHandler {
                     override def onPull(): Unit = {
+                      println("XXXX Got pull on selected out, so pushing to it")
                       out.push(initialElement.get)
                       out.setHandler(propagatePull)
                     }
@@ -114,7 +121,10 @@ private[http] object ProtocolSwitch {
           }
           def connect[T](in: SubSinkInlet[T], out: Outlet[T]): Unit = {
             val handler = new InHandler {
-              override def onPush(): Unit = push(out, in.grab())
+              override def onPush(): Unit = {
+                println("XXXX got push from selected implementation to net")
+                push(out, in.grab())
+              }
             }
 
             val outHandler = new OutHandler {
@@ -127,7 +137,10 @@ private[http] object ProtocolSwitch {
             in.setHandler(handler)
             setHandler(out, outHandler)
 
-            if (isAvailable(out)) in.pull() // to account for lost pulls during initialization
+            if (isAvailable(out)) {
+              println("XXXX fixed out available, pulling from selected implementation because we might have lost polls")
+              in.pull() // to account for lost pulls during initialization
+            }
           }
         }
       }

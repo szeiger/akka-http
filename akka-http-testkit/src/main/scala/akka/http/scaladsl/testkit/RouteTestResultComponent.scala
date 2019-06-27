@@ -86,7 +86,7 @@ trait RouteTestResultComponent {
           val dataChunks = awaitAllElements(data); { () => HttpEntity.CloseDelimited(contentType, Source(dataChunks)) }
 
         case HttpEntity.Chunked(contentType, data) =>
-          val dataChunks = awaitAllElements(data); { () => HttpEntity.Chunked(contentType, Source(dataChunks)) }
+          { () => HttpEntity.Chunked(contentType, data) }
       }
 
     private def failNeitherCompletedNorRejected(): Nothing =
