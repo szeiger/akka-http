@@ -18,8 +18,6 @@ import scala.collection.immutable
 import scala.concurrent.Future
 import scala.util.{ Failure, Success }
 import BasicDirectives._
-import akka.http.ccompat.pre213
-import akka.http.ccompat.since213
 
 /**
  * @groupname form Form field directives
@@ -55,7 +53,7 @@ trait FormFieldDirectives extends ToNameReceptacleEnhancements {
    *
    * @group form
    */
-  @pre213
+  @if(!scala213)
   def formField(pdm: FieldMagnet): pdm.Out = formFields(pdm)
 
   /**
@@ -64,7 +62,7 @@ trait FormFieldDirectives extends ToNameReceptacleEnhancements {
    *
    * @group form
    */
-  @since213
+  @if(scala213)
   def formField(pdm: FieldMagnet): Directive[pdm.U] = formFields(pdm)
 
   /**
@@ -73,7 +71,7 @@ trait FormFieldDirectives extends ToNameReceptacleEnhancements {
    *
    * @group form
    */
-  @pre213
+  @if(!scala213)
   def formFields(pdm: FieldMagnet): pdm.Out =
     pdm.convert(toStrictEntity(StrictForm.toStrictTimeout).wrap { pdm() })
 
@@ -83,7 +81,7 @@ trait FormFieldDirectives extends ToNameReceptacleEnhancements {
    *
    * @group form
    */
-  @since213
+  @if(scala213)
   def formFields(pdm: FieldMagnet): Directive[pdm.U] =
     toStrictEntity(StrictForm.toStrictTimeout).wrap { pdm() }
 }

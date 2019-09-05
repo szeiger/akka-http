@@ -11,7 +11,6 @@ import akka.http.scaladsl.model._
 import akka.http.javadsl.{ model => jm }
 import akka.http.impl.util.JavaMapping.Implicits._
 import UriRendering.UriRenderer
-import akka.http.ccompat.{ pre213, since213 }
 
 final case class LinkValue(uri: Uri, params: immutable.Seq[LinkParam]) extends jm.headers.LinkValue with ValueRenderable {
   def render[R <: Rendering](r: R): r.type = {
@@ -25,9 +24,9 @@ final case class LinkValue(uri: Uri, params: immutable.Seq[LinkParam]) extends j
 }
 
 object LinkValue {
-  @pre213
+  @if(!scala213)
   def apply(uri: Uri, params: LinkParam*): LinkValue = apply(uri, immutable.Seq(params: _*))
-  @since213
+  @if(scala213)
   def apply(uri: Uri, firstParam: LinkParam, otherParams: LinkParam*): LinkValue = apply(uri, firstParam +: otherParams)
 }
 

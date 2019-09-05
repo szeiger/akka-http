@@ -125,7 +125,12 @@ def add212CrossDirs(config: Configuration): Seq[Setting[_]] = Seq(
 
 val commonSettings =
   add213CrossDirs(Compile) ++
-  add213CrossDirs(Test)
+  add213CrossDirs(Test) ++ Seq(
+    scalacOptions ++= {
+      if(scalaVersion.value.startsWith("2.13.")) Seq("-Cscala213=true")
+      else Seq.empty
+    }
+  )
 
 val scalaMacroSupport = Seq(
   scalacOptions ++= {

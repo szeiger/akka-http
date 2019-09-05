@@ -7,6 +7,9 @@ package akka.http.scaladsl.util
 import scala.language.higherKinds
 import scala.util.control.NonFatal
 import scala.util.{ Failure, Success, Try }
+@if(scala213)
+import scala.collection.BuildFrom
+@if(!scala213)
 import scala.collection.generic.CanBuildFrom
 import scala.concurrent.duration.Duration
 import scala.concurrent._
@@ -101,19 +104,48 @@ object FastFuture {
     def fast: FastFuture[T] = new FastFuture[T](future)
   }
 
+  @if(scala213)
+  def sequence[T, M[_] <: IterableOnce[_]](in: M[Future[T]])(implicit cbf: BuildFrom[M[Future[T]], T, M[T]], executor: ExecutionContext): Future[M[T]] =
+    in.iterator.foldLeft(successful(cbf.newBuilder(in))) {
+      (fr, fa) => for (r <- fr.fast; a <- fa.asInstanceOf[Future[T]].fast) yield r += a
+    }.fast.map(_.result())
+
+  /* FIXME
+  @if(scala213)
+  def fold[T, R](futures: IterableOnce[Future[T]])(zero: R)(f: (R, T) => R)(implicit executor: ExecutionContext): Future[R] =
+    if (futures.isEmpty) successful(zero)
+    else sequence(futures).fast.map(_.foldLeft(zero)(f))
+
+  @if(scala213)
+  def reduce[T, R >: T](futures: IterableOnce[Future[T]])(op: (R, T) => R)(implicit executor: ExecutionContext): Future[R] =
+    if (futures.isEmpty) failed(new NoSuchElementException("reduce attempted on empty collection"))
+    else sequence(futures).fast.map(_ reduceLeft op)
+*/
+
+  @if(scala213)
+  def traverse[A, B, M[_] <: IterableOnce[_]](in: M[A])(fn: A => Future[B])(implicit cbf: BuildFrom[M[A], B, M[B]], executor: ExecutionContext): Future[M[B]] =
+    in.iterator.foldLeft(successful(cbf.newBuilder(in))) { (fr, a) =>
+      val fb = fn(a.asInstanceOf[A])
+      for (r <- fr.fast; b <- fb.fast) yield r += b
+    }.fast.map(_.result())
+
+  @if(!scala213)
   def sequence[T, M[_] <: TraversableOnce[_]](in: M[Future[T]])(implicit cbf: CanBuildFrom[M[Future[T]], T, M[T]], executor: ExecutionContext): Future[M[T]] =
     in.foldLeft(successful(cbf(in))) {
       (fr, fa) => for (r <- fr.fast; a <- fa.asInstanceOf[Future[T]].fast) yield r += a
     }.fast.map(_.result())
 
+  @if(!scala213)
   def fold[T, R](futures: TraversableOnce[Future[T]])(zero: R)(f: (R, T) => R)(implicit executor: ExecutionContext): Future[R] =
     if (futures.isEmpty) successful(zero)
     else sequence(futures).fast.map(_.foldLeft(zero)(f))
 
+  @if(!scala213)
   def reduce[T, R >: T](futures: TraversableOnce[Future[T]])(op: (R, T) => R)(implicit executor: ExecutionContext): Future[R] =
     if (futures.isEmpty) failed(new NoSuchElementException("reduce attempted on empty collection"))
     else sequence(futures).fast.map(_ reduceLeft op)
 
+  @if(!scala213)
   def traverse[A, B, M[_] <: TraversableOnce[_]](in: M[A])(fn: A => Future[B])(implicit cbf: CanBuildFrom[M[A], B, M[B]], executor: ExecutionContext): Future[M[B]] =
     in.foldLeft(successful(cbf(in))) { (fr, a) =>
       val fb = fn(a.asInstanceOf[A])

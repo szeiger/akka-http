@@ -37,7 +37,7 @@ trait RespondWithDirectives {
    *
    * @group response
    */
-  @pre213
+  @if(!scala213)
   def respondWithHeaders(responseHeaders: HttpHeader*): Directive0 =
     respondWithHeaders(responseHeaders.toList)
 
@@ -49,7 +49,7 @@ trait RespondWithDirectives {
   def respondWithHeaders(responseHeaders: immutable.Seq[HttpHeader]): Directive0 =
     mapResponseHeaders(responseHeaders.toList ++ _)
 
-  @since213
+  @if(scala213)
   def respondWithHeaders(firstHeader: HttpHeader, otherHeaders: HttpHeader*): Directive0 =
     respondWithHeaders(firstHeader +: otherHeaders.toList)
 
@@ -59,7 +59,7 @@ trait RespondWithDirectives {
    *
    * @group response
    */
-  @pre213
+  @if(!scala213)
   def respondWithDefaultHeaders(responseHeaders: HttpHeader*): Directive0 =
     respondWithDefaultHeaders(responseHeaders.toList)
 
@@ -78,7 +78,7 @@ trait RespondWithDirectives {
    *
    * @group response
    */
-  @since213
+  @if(scala213)
   def respondWithDefaultHeaders(firstHeader: HttpHeader, otherHeaders: HttpHeader*): Directive0 =
     respondWithDefaultHeaders(firstHeader +: otherHeaders.toList)
 
