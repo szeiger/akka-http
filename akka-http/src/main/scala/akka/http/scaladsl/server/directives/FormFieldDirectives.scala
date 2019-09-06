@@ -53,17 +53,11 @@ trait FormFieldDirectives extends ToNameReceptacleEnhancements {
    *
    * @group form
    */
-  @if(!scala213)
-  def formField(pdm: FieldMagnet): pdm.Out = formFields(pdm)
-
-  /**
-   * Extracts an HTTP form field from the request.
-   * Rejects the request if the defined form field matcher(s) don't match.
-   *
-   * @group form
-   */
-  @if(scala213)
-  def formField(pdm: FieldMagnet): Directive[pdm.U] = formFields(pdm)
+  #if scala213
+    def formField(pdm: FieldMagnet): Directive[pdm.U] = formFields(pdm)
+  #else
+    def formField(pdm: FieldMagnet): pdm.Out = formFields(pdm)
+  #endif
 
   /**
    * Extracts a number of HTTP form field from the request.
@@ -71,19 +65,13 @@ trait FormFieldDirectives extends ToNameReceptacleEnhancements {
    *
    * @group form
    */
-  @if(!scala213)
-  def formFields(pdm: FieldMagnet): pdm.Out =
-    pdm.convert(toStrictEntity(StrictForm.toStrictTimeout).wrap { pdm() })
-
-  /**
-   * Extracts a number of HTTP form field from the request.
-   * Rejects the request if the defined form field matcher(s) don't match.
-   *
-   * @group form
-   */
-  @if(scala213)
-  def formFields(pdm: FieldMagnet): Directive[pdm.U] =
-    toStrictEntity(StrictForm.toStrictTimeout).wrap { pdm() }
+  #if scala213
+    def formFields(pdm: FieldMagnet): Directive[pdm.U] =
+      toStrictEntity(StrictForm.toStrictTimeout).wrap { pdm() }
+  #else
+    def formFields(pdm: FieldMagnet): pdm.Out =
+      pdm.convert(toStrictEntity(StrictForm.toStrictTimeout).wrap { pdm() })
+  #endif
 }
 
 object FormFieldDirectives extends FormFieldDirectives {

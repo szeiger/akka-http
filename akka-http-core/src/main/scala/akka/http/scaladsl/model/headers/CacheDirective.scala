@@ -82,12 +82,13 @@ object CacheDirectives {
    * http://tools.ietf.org/html/rfc7234#section-5.2.1.4
    */
   case object `no-cache` extends SingletonValueRenderable with RequestDirective with ResponseDirective {
-    @if(!scala213)
-    def apply(fieldNames: String*): `no-cache` =
-      new `no-cache`(immutable.Seq(fieldNames: _*))
-    @if(scala213)
-    def apply(firstFieldName: String, otherFieldNames: String*): `no-cache` =
-      new `no-cache`(firstFieldName +: otherFieldNames.toList)
+    #if scala213
+      def apply(firstFieldName: String, otherFieldNames: String*): `no-cache` =
+        new `no-cache`(firstFieldName +: otherFieldNames.toList)
+    #else
+      def apply(fieldNames: String*): `no-cache` =
+        new `no-cache`(immutable.Seq(fieldNames: _*))
+    #endif
   }
 
   /**
@@ -137,12 +138,12 @@ object CacheDirectives {
    */
   final case class `private`(fieldNames: immutable.Seq[String]) extends FieldNamesDirective with ResponseDirective
   object `private` {
-    @if(!scala213)
-    def apply(fieldNames: String*): `private` = new `private`(immutable.Seq(fieldNames: _*))
-    @if(scala213)
-    def apply(): `private` = new `private`(immutable.Seq.empty)
-    @if(scala213)
-    def apply(firstFieldName: String, otherFieldNames: String*): `private` = new `private`(firstFieldName +: otherFieldNames)
+    #if scala213
+      def apply(): `private` = new `private`(immutable.Seq.empty)
+      def apply(firstFieldName: String, otherFieldNames: String*): `private` = new `private`(firstFieldName +: otherFieldNames)
+    #else
+      def apply(fieldNames: String*): `private` = new `private`(immutable.Seq(fieldNames: _*))
+    #endif
   }
 
   /** Java API */

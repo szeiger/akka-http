@@ -37,9 +37,13 @@ trait RespondWithDirectives {
    *
    * @group response
    */
-  @if(!scala213)
-  def respondWithHeaders(responseHeaders: HttpHeader*): Directive0 =
-    respondWithHeaders(responseHeaders.toList)
+  #if scala213
+    def respondWithHeaders(firstHeader: HttpHeader, otherHeaders: HttpHeader*): Directive0 =
+      respondWithHeaders(firstHeader +: otherHeaders.toList)
+  #else
+    def respondWithHeaders(responseHeaders: HttpHeader*): Directive0 =
+      respondWithHeaders(responseHeaders.toList)
+  #endif
 
   /**
    * Unconditionally adds the given response headers to all HTTP responses of its inner Route.
@@ -48,20 +52,6 @@ trait RespondWithDirectives {
    */
   def respondWithHeaders(responseHeaders: immutable.Seq[HttpHeader]): Directive0 =
     mapResponseHeaders(responseHeaders.toList ++ _)
-
-  @if(scala213)
-  def respondWithHeaders(firstHeader: HttpHeader, otherHeaders: HttpHeader*): Directive0 =
-    respondWithHeaders(firstHeader +: otherHeaders.toList)
-
-  /**
-   * Adds the given response headers to all HTTP responses of its inner Route,
-   * if a header already exists it is not added again.
-   *
-   * @group response
-   */
-  @if(!scala213)
-  def respondWithDefaultHeaders(responseHeaders: HttpHeader*): Directive0 =
-    respondWithDefaultHeaders(responseHeaders.toList)
 
   /**
    * Adds the given response headers to all HTTP responses of its inner Route,
@@ -78,9 +68,13 @@ trait RespondWithDirectives {
    *
    * @group response
    */
-  @if(scala213)
-  def respondWithDefaultHeaders(firstHeader: HttpHeader, otherHeaders: HttpHeader*): Directive0 =
-    respondWithDefaultHeaders(firstHeader +: otherHeaders.toList)
+  #if scala213
+    def respondWithDefaultHeaders(firstHeader: HttpHeader, otherHeaders: HttpHeader*): Directive0 =
+      respondWithDefaultHeaders(firstHeader +: otherHeaders.toList)
+  #else
+    def respondWithDefaultHeaders(responseHeaders: HttpHeader*): Directive0 =
+      respondWithDefaultHeaders(responseHeaders.toList)
+  #endif
 
 }
 

@@ -125,12 +125,13 @@ import akka.http.impl.util.JavaMapping.Implicits._
 
 // http://tools.ietf.org/html/rfc7231#section-5.3.2
 object Accept extends ModeledCompanion[Accept] {
-  @if(!scala213)
-  def apply(mediaRanges: MediaRange*): Accept =
-    apply(immutable.Seq(mediaRanges: _*))
-  @if(scala213)
-  def apply(firstMediaRange: MediaRange, otherMediaRanges: MediaRange*): Accept =
-    apply(firstMediaRange +: otherMediaRanges)
+  #if scala213
+    def apply(firstMediaRange: MediaRange, otherMediaRanges: MediaRange*): Accept =
+      apply(firstMediaRange +: otherMediaRanges)
+  #else
+    def apply(mediaRanges: MediaRange*): Accept =
+      apply(immutable.Seq(mediaRanges: _*))
+  #endif
   implicit val mediaRangesRenderer = Renderer.defaultSeqRenderer[MediaRange] // cache
 }
 final case class Accept(mediaRanges: immutable.Seq[MediaRange]) extends jm.headers.Accept with RequestHeader {
@@ -161,15 +162,15 @@ final case class `Accept-Charset`(charsetRanges: immutable.Seq[HttpCharsetRange]
 
 // http://tools.ietf.org/html/rfc7231#section-5.3.4
 object `Accept-Encoding` extends ModeledCompanion[`Accept-Encoding`] {
-  @if(!scala213)
-  def apply(encodings: HttpEncodingRange*): `Accept-Encoding` =
-    apply(immutable.Seq(encodings: _*))
-  @if(scala213)
-  def apply(): `Accept-Encoding` =
-    apply(immutable.Seq.empty)
-  @if(scala213)
-  def apply(firstEncoding: HttpEncodingRange, otherEncodings: HttpEncodingRange*): `Accept-Encoding` =
-    apply(firstEncoding +: otherEncodings)
+  #if scala213
+    def apply(): `Accept-Encoding` =
+      apply(immutable.Seq.empty)
+    def apply(firstEncoding: HttpEncodingRange, otherEncodings: HttpEncodingRange*): `Accept-Encoding` =
+      apply(firstEncoding +: otherEncodings)
+  #else
+    def apply(encodings: HttpEncodingRange*): `Accept-Encoding` =
+      apply(immutable.Seq(encodings: _*))
+  #endif
   implicit val encodingsRenderer = Renderer.defaultSeqRenderer[HttpEncodingRange] // cache
 }
 final case class `Accept-Encoding`(encodings: immutable.Seq[HttpEncodingRange]) extends jm.headers.AcceptEncoding
@@ -200,15 +201,15 @@ final case class `Accept-Language`(languages: immutable.Seq[LanguageRange]) exte
 
 // http://tools.ietf.org/html/rfc7233#section-2.3
 object `Accept-Ranges` extends ModeledCompanion[`Accept-Ranges`] {
-  @if(!scala213)
-  def apply(rangeUnits: RangeUnit*): `Accept-Ranges` =
-    apply(immutable.Seq(rangeUnits: _*))
-  @if(scala213)
-  def apply(): `Accept-Ranges` =
-    apply(immutable.Seq.empty)
-  @if(scala213)
-  def apply(firstRangeUnit: RangeUnit, otherRangeUnits: RangeUnit*): `Accept-Ranges` =
-    apply(firstRangeUnit +: otherRangeUnits)
+  #if scala213
+    def apply(): `Accept-Ranges` =
+      apply(immutable.Seq.empty)
+    def apply(firstRangeUnit: RangeUnit, otherRangeUnits: RangeUnit*): `Accept-Ranges` =
+      apply(firstRangeUnit +: otherRangeUnits)
+  #else
+    def apply(rangeUnits: RangeUnit*): `Accept-Ranges` =
+      apply(immutable.Seq(rangeUnits: _*))
+  #endif
   implicit val rangeUnitsRenderer = Renderer.defaultSeqRenderer[RangeUnit] // cache
 }
 final case class `Accept-Ranges`(rangeUnits: immutable.Seq[RangeUnit]) extends jm.headers.AcceptRanges
@@ -231,12 +232,13 @@ final case class `Access-Control-Allow-Credentials`(allow: Boolean)
 
 // http://www.w3.org/TR/cors/#access-control-allow-headers-response-header
 object `Access-Control-Allow-Headers` extends ModeledCompanion[`Access-Control-Allow-Headers`] {
-  @if(!scala213)
-  def apply(headers: String*): `Access-Control-Allow-Headers` =
-    apply(immutable.Seq(headers: _*))
-  @if(scala213)
-  def apply(firstHeader: String, otherHeaders: String*): `Access-Control-Allow-Headers` =
-    apply(firstHeader +: otherHeaders)
+  #if scala213
+    def apply(firstHeader: String, otherHeaders: String*): `Access-Control-Allow-Headers` =
+      apply(firstHeader +: otherHeaders)
+  #else
+    def apply(headers: String*): `Access-Control-Allow-Headers` =
+      apply(immutable.Seq(headers: _*))
+  #endif
   implicit val headersRenderer = Renderer.defaultSeqRenderer[String] // cache
 }
 final case class `Access-Control-Allow-Headers`(headers: immutable.Seq[String])
@@ -251,12 +253,13 @@ final case class `Access-Control-Allow-Headers`(headers: immutable.Seq[String])
 
 // http://www.w3.org/TR/cors/#access-control-allow-methods-response-header
 object `Access-Control-Allow-Methods` extends ModeledCompanion[`Access-Control-Allow-Methods`] {
-  @if(!scala213)
-  def apply(methods: HttpMethod*): `Access-Control-Allow-Methods` =
-    apply(immutable.Seq(methods: _*))
-  @if(scala213)
-  def apply(firstMethod: HttpMethod, otherMethods: HttpMethod*): `Access-Control-Allow-Methods` =
-    apply(firstMethod +: otherMethods)
+  #if scala213
+    def apply(firstMethod: HttpMethod, otherMethods: HttpMethod*): `Access-Control-Allow-Methods` =
+      apply(firstMethod +: otherMethods)
+  #else
+    def apply(methods: HttpMethod*): `Access-Control-Allow-Methods` =
+      apply(immutable.Seq(methods: _*))
+  #endif
   implicit val methodsRenderer = Renderer.defaultSeqRenderer[HttpMethod] // cache
 }
 final case class `Access-Control-Allow-Methods`(methods: immutable.Seq[HttpMethod])
@@ -292,12 +295,13 @@ final case class `Access-Control-Allow-Origin` private (range: HttpOriginRange)
 
 // http://www.w3.org/TR/cors/#access-control-expose-headers-response-header
 object `Access-Control-Expose-Headers` extends ModeledCompanion[`Access-Control-Expose-Headers`] {
-  @if(!scala213)
-  def apply(headers: String*): `Access-Control-Expose-Headers` =
-    apply(immutable.Seq(headers: _*))
-  @if(scala213)
-  def apply(firstHeader: String, otherHeaders: String*): `Access-Control-Expose-Headers` =
-    apply(firstHeader +: otherHeaders)
+  #if scala213
+    def apply(firstHeader: String, otherHeaders: String*): `Access-Control-Expose-Headers` =
+      apply(firstHeader +: otherHeaders)
+  #else
+    def apply(headers: String*): `Access-Control-Expose-Headers` =
+      apply(immutable.Seq(headers: _*))
+  #endif
   implicit val headersRenderer = Renderer.defaultSeqRenderer[String] // cache
 }
 final case class `Access-Control-Expose-Headers`(headers: immutable.Seq[String])
@@ -320,12 +324,13 @@ final case class `Access-Control-Max-Age`(deltaSeconds: Long) extends jm.headers
 
 // http://www.w3.org/TR/cors/#access-control-request-headers-request-header
 object `Access-Control-Request-Headers` extends ModeledCompanion[`Access-Control-Request-Headers`] {
-  @if(!scala213)
-  def apply(headers: String*): `Access-Control-Request-Headers` =
-    apply(immutable.Seq(headers: _*))
-  @if(scala213)
-  def apply(firstHeader: String, otherHeaders: String*): `Access-Control-Request-Headers` =
-    apply(firstHeader +: otherHeaders)
+  #if scala213
+    def apply(firstHeader: String, otherHeaders: String*): `Access-Control-Request-Headers` =
+      apply(firstHeader +: otherHeaders)
+  #else
+    def apply(headers: String*): `Access-Control-Request-Headers` =
+      apply(immutable.Seq(headers: _*))
+  #endif
   implicit val headersRenderer = Renderer.defaultSeqRenderer[String] // cache
 }
 final case class `Access-Control-Request-Headers`(headers: immutable.Seq[String])
@@ -355,15 +360,15 @@ final case class Age(deltaSeconds: Long) extends jm.headers.Age with ResponseHea
 
 // http://tools.ietf.org/html/rfc7231#section-7.4.1
 object Allow extends ModeledCompanion[Allow] {
-  @if(!scala213)
-  def apply(methods: HttpMethod*): Allow =
-    apply(immutable.Seq(methods: _*))
-  @if(scala213)
-  def apply(): `Allow` =
-    apply(immutable.Seq.empty)
-  @if(scala213)
-  def apply(firstMethod: HttpMethod, otherMethods: HttpMethod*): Allow =
-    apply(firstMethod +: otherMethods)
+  #if scala213
+    def apply(): `Allow` =
+      apply(immutable.Seq.empty)
+    def apply(firstMethod: HttpMethod, otherMethods: HttpMethod*): Allow =
+      apply(firstMethod +: otherMethods)
+  #else
+    def apply(methods: HttpMethod*): Allow =
+      apply(immutable.Seq(methods: _*))
+  #endif
   implicit val methodsRenderer = Renderer.defaultSeqRenderer[HttpMethod] // cache
 }
 final case class Allow(methods: immutable.Seq[HttpMethod]) extends jm.headers.Allow with ResponseHeader {
@@ -497,10 +502,11 @@ final case class `Content-Type` private[http] (contentType: ContentType) extends
 object Cookie extends ModeledCompanion[Cookie] {
   def apply(first: HttpCookiePair, more: HttpCookiePair*): Cookie = apply(immutable.Seq(first +: more: _*))
   def apply(name: String, value: String): Cookie = apply(HttpCookiePair(name, value))
-  @if(!scala213)
-  def apply(values: (String, String)*): Cookie = apply(values.map(HttpCookiePair(_)).toList)
-  @if(scala213)
-  def apply(first: (String, String), more: (String, String)*): Cookie = apply((first +: more).map(HttpCookiePair(_)))
+  #if scala213
+    def apply(first: (String, String), more: (String, String)*): Cookie = apply((first +: more).map(HttpCookiePair(_)))
+  #else
+    def apply(values: (String, String)*): Cookie = apply(values.map(HttpCookiePair(_)).toList)
+  #endif
   implicit val cookiePairsRenderer = Renderer.seqRenderer[HttpCookiePair](separator = "; ") // cache
 }
 final case class Cookie(cookies: immutable.Seq[HttpCookiePair]) extends jm.headers.Cookie with RequestHeader {
@@ -644,10 +650,11 @@ final case class `Last-Modified`(date: DateTime) extends jm.headers.LastModified
 // http://tools.ietf.org/html/rfc5988#section-5
 object Link extends ModeledCompanion[Link] {
   def apply(uri: Uri, first: LinkParam, more: LinkParam*): Link = apply(immutable.Seq(LinkValue(uri, first +: more.toList)))
-  @if(!scala213)
-  def apply(values: LinkValue*): Link = apply(immutable.Seq(values: _*))
-  @if(scala213)
-  def apply(firstValue: LinkValue, otherValues: LinkValue*): Link = apply(firstValue +: otherValues)
+  #if scala213
+    def apply(firstValue: LinkValue, otherValues: LinkValue*): Link = apply(firstValue +: otherValues)
+  #else
+    def apply(values: LinkValue*): Link = apply(immutable.Seq(values: _*))
+  #endif
 
   implicit val valuesRenderer = Renderer.defaultSeqRenderer[LinkValue] // cache
 }
@@ -672,10 +679,11 @@ final case class Location(uri: Uri) extends jm.headers.Location with ResponseHea
 
 // http://tools.ietf.org/html/rfc6454#section-7
 object Origin extends ModeledCompanion[Origin] {
-  @if(!scala213)
-  def apply(origins: HttpOrigin*): Origin = apply(immutable.Seq(origins: _*))
-  @if(scala213)
-  def apply(firstOrigin: HttpOrigin, otherOrigins: HttpOrigin*): Origin = apply(firstOrigin +: otherOrigins)
+  #if scala213
+    def apply(firstOrigin: HttpOrigin, otherOrigins: HttpOrigin*): Origin = apply(firstOrigin +: otherOrigins)
+  #else
+    def apply(origins: HttpOrigin*): Origin = apply(immutable.Seq(origins: _*))
+  #endif
 }
 final case class Origin(origins: immutable.Seq[HttpOrigin]) extends jm.headers.Origin with RequestHeader {
   def renderValue[R <: Rendering](r: R): r.type = if (origins.isEmpty) r ~~ "null" else r ~~ origins
